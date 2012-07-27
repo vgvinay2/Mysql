@@ -56,7 +56,7 @@ select DISTINCT Location from Sandwiches where Filling IN(
 select filling from Tastes where name="Jones");
 
 select DISTINCT s.Location from Sandwiches s
-left JOIN Tastes t
+left JOIN Tastesexit t
 ON s.Filling=t.Filling
 where t.Name="Jones";
 
