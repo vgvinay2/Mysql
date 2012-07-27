@@ -52,10 +52,10 @@ INSERT INTO Sandwiches VALUES("Old Nag","Rye","Ham",1.40);
 
 Queries:
 
-select DISTINCT Location from Sandwiches where Filling IN(
+select Location from Sandwiches where Filling IN(
 select filling from Tastes where name="Jones");
 
-select DISTINCT s.Location from Sandwiches s
+select s.Location from Sandwiches s
 left JOIN Tastes t
 ON s.Filling=t.Filling
 where t.Name="Jones";
