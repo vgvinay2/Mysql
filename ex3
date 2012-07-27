@@ -1,0 +1,93 @@
+USE test_db;
+
+Tables:
+
+CREATE TABLE Users
+(User_Id VARCHAR(10),
+Type ENUM('Normal', 'Admin'),
+PRIMARY KEY(User_Id)
+);
+
+
+CREATE TABLE Articles
+(User_Id Varchar(10),
+Article_Id VARCHAR(10),
+Category VARCHAR(10),
+PRIMARY KEY(Article_Id),
+FOREIGN KEY (User_Id) REFERENCES Users(User_ID)
+);
+
+
+CREATE TABLE Comments
+(User_Id VARCHAR(10) ,
+Article_Id VARCHAR(10),
+Comments_Id VARCHAR(10),
+Comment VARCHAR(20),
+PRIMARY KEY(Comments_Id),
+FOREIGN KEY (User_Id) REFERENCES Users(User_ID),
+FOREIGN KEY (Article_Id) REFERENCES Articles(Article_ID)
+);
+
+
+Insert Statements:
+
+INSERT INTO Users VALUES("user1","Normal");
+INSERT INTO Users VALUES("user2","Normal");
+INSERT INTO Users VALUES("user3","Normal");
+INSERT INTO Users VALUES("user4","Admin");
+INSERT INTO Users VALUES("user5","Normal");
+INSERT INTO Users VALUES("user6","Normal");
+
+
+
+INSERT INTO Articles VALUES("user6","a1","Technology");
+INSERT INTO Articles VALUES("user6","a2","Ruby");
+INSERT INTO Articles VALUES("user5","a3","Technology");
+INSERT INTO Articles VALUES("user4","a4","Java");
+INSERT INTO Articles VALUES("user3","a5","Rails");
+INSERT INTO Articles VALUES("user4","a6","Technology");
+INSERT INTO Articles VALUES("user3","a7","OOPS");
+INSERT INTO Articles VALUES("user1","a8","SQL");
+INSERT INTO Articles VALUES("user4","a9","OOPS");
+INSERT INTO Articles VALUES("user5","a10","Java");
+INSERT INTO Articles VALUES("user6","a11","Technology");
+INSERT INTO Articles VALUES("user3","a12","Rails");
+INSERT INTO Articles VALUES("user2","a13","SQL");
+INSERT INTO Articles VALUES("user1","a14","OOPS");
+
+INSERT INTO Comments VALUES("user1","a12","1","yes");
+INSERT INTO Comments VALUES("user2","a10","2","No");
+INSERT INTO Comments VALUES("user3","a14","3","Nice");
+INSERT INTO Comments VALUES("user3","a10","4","great");
+INSERT INTO Comments VALUES("user4","a1","5","well");
+INSERT INTO Comments VALUES("user5","a2","6","jj");
+INSERT INTO Comments VALUES("user3","a3","7","Hello");
+INSERT INTO Comments VALUES("user6","a4","8","Right");
+INSERT INTO Comments VALUES("user6","a5","9","Right");
+INSERT INTO Comments VALUES("user3","a10","10"," nicegreat");
+INSERT INTO Comments VALUES("user2","a5","11","Right");
+
+
+queries:
+
+select Article_Id from Articles where User_Id="user3";
+
+
+select c.Article_Id,c.comment from Comments c where c.Article_Id IN(
+select a.Article_Id from Articles a where a.User_Id="user3");
+
+select Article_Id from Articles where Article_Id NOT IN(
+select Article_Id from Comments);
+
+
+select Article_Id from Comments GROUP BY Article_Id ORDER BY COUNT(Article_Id) DESC limit 1;
+
+
+select a.Article_Id from Articles a
+LEFT JOIN (select Article_Id from Comments
+group by Article_Id,User_Id
+having count(Comment)>1) c
+ON c.Article_Id=a.Article_Id
+where c.Article_Id is NULL;
+
+
