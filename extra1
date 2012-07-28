@@ -1,0 +1,165 @@
+USE test_db;
+
+CREATE TABLE Employees
+(Employee_Id VARCHAR(10),
+Name VARCHAR(10),
+PRIMARY KEY(Employee_Id)
+);
+
+
+CREATE TABLE Assets
+(Asset_Id VARCHAR(10),
+Type VARCHAR(10),
+Bought DATE,
+Model VARCHAR(10),
+Make VARCHAR(10),
+price Float,
+Warranty INT,
+Location VARCHAR(10),
+PRIMARY KEY(Asset_Id)
+);
+
+
+CREATE TABLE Allotments
+(Allotment_Id VARCHAR(10),
+Asset_Id VARCHAR(10),
+Employee_Id VARCHAR(10),
+Time_From DATE,
+Time_To DATE,
+PRIMARY KEY(Allotment_Id),
+FOREIGN KEY (Employee_Id) REFERENCES Employees(Employee_Id),
+FOREIGN KEY (Asset_Id) REFERENCES Assets(Asset_Id)
+);
+
+
+CREATE TABLE Repairs
+(Repair_Id VARCHAR(10),
+Asset_Id VARCHAR(10),
+Cost Float,
+Nature VARCHAR(10),
+Warranty INT,
+PRIMARY KEY(Repair_Id),
+FOREIGN KEY (Asset_Id) REFERENCES Assets(Asset_Id)
+);
+
+Insert Statements:
+Insert INTO Employees VALUES("e1","Alice");
+Insert INTO Employees VALUES("e2","Bob");
+Insert INTO Employees VALUES("e3","Chris");
+Insert INTO Employees VALUES("e4","Duke");
+Insert INTO Employees VALUES("e5","Emily");
+
+Insert INTO Assets VALUES("Laptop A","Laptop","2011-01-01","Probook","HP",45000,1,null);
+Insert INTO Assets VALUES("Laptop B","Laptop","2011-01-01","Presario","HP",40000,1,"cupboard");
+Insert INTO Assets VALUES("Laptop N1","Laptop","2011-01-01","Pro","HP",50000,1,"cupboard");
+Insert INTO Assets VALUES("Laptop N2","Laptop",'2011-01-01',"Pro","HP",55000,1,"cupboard");
+Insert INTO Assets VALUES("Iphone A","Iphone","2011-04-01","Pre","Apple",35000,1,null);
+Insert INTO Assets VALUES("Iphone B","Iphone","2011-01-01","5","Apple",45000,1,null);
+Insert INTO Assets VALUES("Projector A","Projector","2011-08-15","flat","HP",5000,1,"Meeting Room");
+Insert INTO Assets VALUES("Printer A","Printer","2011-08-15","Ink","HP",4000,1,"Meeting Room");
+Insert INTO Assets VALUES("Printer B","Printer","2011-09-10","Inker","HP",3400,1,"cupboard");
+
+Insert INTO Allotments VALUES("a1","Laptop A","e1","2011-01-01","2011-12-31");
+Insert INTO Allotments VALUES("a2","Laptop A","e2","2012-01-01",CURDATE());
+Insert INTO Allotments VALUES("a3","Laptop B","e2","2011-01-01","2011-12-31");
+Insert INTO Allotments VALUES("a4","Iphone A","e1","2011-04-01",CURDATE());
+Insert INTO Allotments VALUES("a5","Iphone B","e2","2011-01-01",CURDATE());
+
+Queries:
+
+select e.Name from Employees e
+INNER JOIN Allotments a
+ON e.Employee_Id=a.Employee_Id
+GROUP BY a.Employee_Id
+ORDER BY COUNT(a.Employee_Id) DESC limit 1;
+
+
+select e.Name from Employees e
+INNER JOIN Allotments a
+ON e.Employee_Id=a.Employee_Id AND a.Time_To=CURDATE()
+GROUP BY a.Employee_Id
+ORDER BY COUNT(a.Employee_Id) DESC limit 1;
+
+
+select e.Name,DATEDIFF(al.Time_To,a.Bought) AS Period
+from Assets a
+INNER JOIN Allotments al
+ON a.Asset_Id=al.Asset_Id AND a.Bought=al.Time_From AND a.Type="Laptop"
+INNER JOIN Employees e
+ON e.Employee_Id=al.Employee_Id;
+
+select Asset_Id from Assets where Location="cupboard";
+
+
+select a.Asset_Id from Allotments a
+INNER JOIN Employees e
+ON a.Employee_Id=e.Employee_Id AND e.Name="Bob" AND a.Time_To=CURDATE();
+
+select a.Asset_Id from Assets a
+where DATEDIFF(CURDATE(),a.Bought)>(a.Warranty*365);
+
+select ee.Name from Employees ee
+where ee.Employee_Id NOT IN(
+select e.Employee_Id from Employees e
+INNER JOIN Allotments a
+ON e.Employee_Id=a.Employee_Id);
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
