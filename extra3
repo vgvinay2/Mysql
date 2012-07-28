@@ -1,0 +1,36 @@
+USE test_db;
+
+CREATE TABLE Surveys
+(Email VARCHAR(30),
+Phone VARCHAR(10),
+City VARCHAR(10),
+PRIMARY KEY(Email)
+);
+
+LOADING DATA:
+
+load data local infile 'website.csv' into table Surveys fields terminated by ','
+enclosed by '"'
+lines terminated by '\n';
+
+
+Queries:
+
+select DISTINCT City from Surveys;
+
+select city,Count(*) from Surveys
+Group BY City;
+
+select city from Surveys
+Group BY City
+ORDER BY COUNT(City) DESC limit 1;
+
+select DISTINCT SUBSTRING_INDEX(Email,'@',-1) AS Domain
+from Surveys;
+
+select DISTINCT SUBSTRING_INDEX(Email,'@',-1) AS Domain
+from Surveys
+GROUP BY Domain
+ORDER BY COUNT(Domain) DESC limit 1;
+
+
