@@ -1,0 +1,88 @@
+ans 1
+id:(id of select) The serial number wise id for the select.
+
+select_type:
+simple:no subquery,no union simple select
+Primary:Outermost SELECT statement in a subquery
+union:Second or later SELECT statement in a UNION
+dependent union:Second or later SELECT statement in a UNION, dependent on outer query
+union result:Result of a UNION.
+subquery:First SELECT in subquery
+dependent subquery:First SELECT in subquery, dependent on outer query
+derived:Derived table SELECT (subquery in FROM clause)
+uncacheable subquery:A subquery for which the result cannot be cached and must be re-evaluated for each row of the outer query
+
+table:the name of the table to which the output refers
+
+type:
+system:the table has only one row
+const:the table has atmost one matching recoed
+eq_ref:One row is read from this table for each combination of rows from the previous tables. It is used when all parts of an index are used by the join and the index is a PRIMARY KEY or UNIQUE NOT NULL index.
+ref:All rows with matching index values are read from this table for each combination of rows from the previous tables. ref is used if the join uses only a leftmost prefix of the key or if the key is not a PRIMARY KEY or UNIQUE index (in other words, if the join cannot select a single row based on the key).
+ref or nul:MySQL does an extra search for rows that contain NULL values;
+index_merge:output contains a key column
+unique_subquery:the output of subquery is single
+index_subquery:in this the output of subquery is non index value.
+range:if value from a particular range is used
+ALL:A full table scan is done for each combination of rows from the previous tables
+index:This join type is the same as ALL, except that only the index tree is scanned. This usually is faster than ALL because the index file usually is smaller than the data file.
+
+possible_keys:possible columns for indexing
+
+key:actual key being used to get the result(this key is used to search results).
+
+key_length:length of the key being used
+
+ref:which column are compared with index during search
+
+rows:no of rows query needs to go through tto give the output
+
+Extra:extra information like using where,DISTINCT
+
+
+ans 2
+2.1
+It shows that the query above searches each and every column in the comments table to get the result.
+2.2
+No.it is not optimal,we can use index on user_id to get result in a optimised way.
+
+
+ans 3
+3.1 User_id then commentable_id and then commentable_type
+
+
+ans 4
+
+
+explain select e.Employee_Id from Employees e INNER JOIN Allotments a ON a.Employee_Id=e.Employee_Id where a.Asset_Id="Laptop ";
+
+mysql> explain select e.Employee_Id from Employees e INNER JOIN Allotments a ON a.Employee_Id=e.Employee_Id where e.Name="Alice";
++----+-------------+-------+-------+---------------+-------------+---------+------+------+--------------------------------+
+| id | select_type | table | type  | possible_keys | key         | key_len | ref  | rows | Extra                          |
++----+-------------+-------+-------+---------------+-------------+---------+------+------+--------------------------------+
+|  1 | SIMPLE      | a     | index | Employee_Id   | Employee_Id | 13      | NULL |    5 | Using index                    |
+|  1 | SIMPLE      | e     | ALL   | PRIMARY       | NULL        | NULL    | NULL |    5 | Using where; Using join buffer |
++----+-------------+-------+-------+---------------+-------------+---------+------+------+--------------------------------+
+2 rows in set (0.00 sec)
+
+
+no 2 rows:1 each for table which are joined
+
+
+explain select Employee_Id from Employees where Employee_Id IN(select Employee_Id from Allotments) AND name="Alice";
+ 
+mysql> explain select Employee_Id from Employees where Employee_Id IN(select Employee_Id from Allotments) AND name="Alice";
++----+--------------------+------------+----------------+---------------+-------------+---------+------+------+--------------------------+
+| id | select_type        | table      | type           | possible_keys | key         | key_len | ref  | rows | Extra                    |
++----+--------------------+------------+----------------+---------------+-------------+---------+------+------+--------------------------+
+|  1 | PRIMARY            | Employees  | ALL            | NULL          | NULL        | NULL    | NULL |    5 | Using where              |
+|  2 | DEPENDENT SUBQUERY | Allotments | index_subquery | Employee_Id   | Employee_Id | 13      | func |    1 | Using index; Using where |
++----+--------------------+------------+----------------+---------------+-------------+---------+------+------+--------------------------+
+2 rows in set (0.00 sec)
+
+ 
+Clearly subquery is better as joins have to go through many rows to get the result but in case of subquery this number is less.
+In subquery outer select goes through every row but dependent subquery is used with Employee_Id as key and hence only 1 row.
+but with joins every select of each table(e&a) goes through 5 rows to get the result.
+
+
