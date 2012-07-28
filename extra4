@@ -1,0 +1,12 @@
+
+select firstname,lastname from users where referrer_id is not null;
+
+
+select u.firstname,u.created_at,c.name,(du.quantity*du.unit_price+du.shipping_charges) AS First_Purchase,count(du.id) AS NO_OF_Purchases,sum(du.quantity*du.unit_price+du.shipping_charges) AS Total_Money_Spent from users u INNER JOIN deals_users du  ON u.id=du.user_id 
+INNER JOIN deals d
+ON d.id=du.deal_id
+INNER JOIN categories c
+ON d.category_id=c.id
+group by du.user_id 
+order by(du.created_at);
+
