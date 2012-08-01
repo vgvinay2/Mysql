@@ -10,3 +10,5 @@ ON d.category_id=c.id
 group by du.user_id 
 order by(du.created_at);
 
+
+

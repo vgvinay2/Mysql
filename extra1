@@ -60,10 +60,10 @@ Insert INTO Assets VALUES("Printer A","Printer","2011-08-15","Ink","HP",4000,1,"
 Insert INTO Assets VALUES("Printer B","Printer","2011-09-10","Inker","HP",3400,1,"cupboard");
 
 Insert INTO Allotments VALUES("a1","Laptop A","e1","2011-01-01","2011-12-31");
-Insert INTO Allotments VALUES("a2","Laptop A","e2","2012-01-01",CURDATE());
+Insert INTO Allotments VALUES("a2","Laptop A","e2","2012-01-01","0000-00-00");
 Insert INTO Allotments VALUES("a3","Laptop B","e2","2011-01-01","2011-12-31");
-Insert INTO Allotments VALUES("a4","Iphone A","e1","2011-04-01",CURDATE());
-Insert INTO Allotments VALUES("a5","Iphone B","e2","2011-01-01",CURDATE());
+Insert INTO Allotments VALUES("a4","Iphone A","e1","2011-04-01","0000-00-00");
+Insert INTO Allotments VALUES("a5","Iphone B","e2","2011-01-01","0000-00-00");
 
 Queries:
 
@@ -76,15 +76,17 @@ ORDER BY COUNT(a.Employee_Id) DESC limit 1;
 
 select e.Name from Employees e
 INNER JOIN Allotments a
-ON e.Employee_Id=a.Employee_Id AND a.Time_To=CURDATE()
+ON e.Employee_Id=a.Employee_Id AND a.Time_To='0000-00-00'
 GROUP BY a.Employee_Id
 ORDER BY COUNT(a.Employee_Id) DESC limit 1;
 
 
-select e.Name,DATEDIFF(al.Time_To,a.Bought) AS Period
+
+
+select e.Name,DATEDIFF(CURDATE(),a.Bought) AS Period
 from Assets a
 INNER JOIN Allotments al
-ON a.Asset_Id=al.Asset_Id AND a.Bought=al.Time_From AND a.Type="Laptop"
+ON a.Asset_Id=al.Asset_Id AND a.Bought=al.Time_From AND type="Laptop" AND al.Time_To="0000-00-00"
 INNER JOIN Employees e
 ON e.Employee_Id=al.Employee_Id;
 
@@ -93,7 +95,7 @@ select Asset_Id from Assets where Location="cupboard";
 
 select a.Asset_Id from Allotments a
 INNER JOIN Employees e
-ON a.Employee_Id=e.Employee_Id AND e.Name="Bob" AND a.Time_To=CURDATE();
+ON a.Employee_Id=e.Employee_Id AND e.Name="Bob" AND a.Time_To="0000-00-00";
 
 select a.Asset_Id from Assets a
 where DATEDIFF(CURDATE(),a.Bought)>(a.Warranty*365);
@@ -103,7 +105,6 @@ where ee.Employee_Id NOT IN(
 select e.Employee_Id from Employees e
 INNER JOIN Allotments a
 ON e.Employee_Id=a.Employee_Id);
-
 
 
 
