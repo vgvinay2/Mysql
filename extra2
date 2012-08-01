@@ -13,3 +13,9 @@ INSERT INTO tags VALUES("2","2");
 
 select p.post_Id from tags p
 where p.tag_id ="1" AND p.post_Id IN(select t.post_Id from tags t where t.tag_id="3");
+
+changed...will this work?? :
+
+select p.post_Id from tags p
+Inner join tags f
+ON p.post_Id=f.post_Id AND p.tag_id="1" AND f.tag_id="3";
