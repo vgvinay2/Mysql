@@ -1,0 +1,2 @@
+mysqldump -u root -pqwerty test_db > tut_backup.sql
+source tut_backup.sql
