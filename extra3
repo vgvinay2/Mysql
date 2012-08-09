@@ -27,6 +27,11 @@ ORDER BY COUNT(City) DESC limit 1;
 
 select s.city from Surveys s group by s.city having count(s.city)=(select max(tt.cc) from (select count(city) as cc from Surveys group by city) as tt)
 
+select s.city from Surveys s INNER JOIN (select max(tt.cc) from (select city,count(city) as cc from Surveys group by city) as tt) as f
+on f.city=s.city
+group by city;
+
+
 
 select DISTINCT SUBSTRING_INDEX(Email,'@',-1) AS Domain
 from Surveys;

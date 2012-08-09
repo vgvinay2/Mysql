@@ -82,6 +82,13 @@ ORDER BY COUNT(a.Employee_Id) DESC limit 1;
 
 
 
+select e.Name,count(a.Employee_Id) from Employees e 
+INNER JOIN Allotments a
+ON a.Employee_Id=e.Employee_Id AND a.Time_To='0000-00-00'
+Group BY a.Employee_Id having count(a.Employee_Id)=(select max(tt.cc) from (select count(Employee_Id) as cc from Allotments where Time_To='0000-00-00' group by Employee_Id) as tt);  
+
+
+
 
 select e.Name,DATEDIFF(CURDATE(),a.Bought) AS Period
 from Assets a
@@ -114,17 +121,17 @@ ON e.Employee_Id=a.Employee_Id);
 
 
 
+select e.Name from Employees e 
+INNER JOIN Allotments a
+ON a.Employee_Id=e.Employee_Id AND a.Time_To='0000-00-00'
+Group BY a.Employee_Id having count(a.Employee_Id)=(select max(tt.cc) from (select count(Employee_Id) as cc from Allotments where Time_To='0000-00-00' group by Employee_Id) as tt);  
 
 
-
-
-
-
-
-
-
-
-
+select e.Name from Employees e 
+INNER JOIN Allotments a
+ON a.Employee_Id=e.Employee_Id AND a.Time_To='0000-00-00'
+INNER JOIN (select max(tt.cc) from (select Employee_Id,count(Employee_Id) as cc from Allotments where Time_To='0000-00-00' group by Employee_Id) as tt) as f
+ON f.Employee_Id=a.Employee_Id
 
 
 

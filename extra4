@@ -7,8 +7,23 @@ INNER JOIN deals d
 ON d.id=du.deal_id
 INNER JOIN categories c
 ON d.category_id=c.id
-group by du.user_id 
-order by(du.created_at);
+group by du.user_id limit 5
+order by(du.created_at) limit 5;
 
 
+select u.firstname,du.created_at,count(du.id) from users u INNER JOIN deals_users du
+on u.id=du.user_id
+group by du.user_id limit 20;
+
+
+
+select u.firstname,u.created_at,c.name,du.fpurchase AS First_Purchase,du.did AS NO_OF_Purchases,du.total AS Total_Money_Spent from users u INNER JOIN (select user_id,deal_id,created_at,(quantity*unit_price+shipping_charges) as fpurchase,count(id) as did,sum(quantity*unit_price+shipping_charges) as total from deals_users group by user_id) du  ON u.id=du.user_id 
+INNER JOIN deals d
+ON d.id=du.deal_id
+INNER JOIN categories c
+ON d.category_id=c.id
+group by du.user_id limit 5
+order by(du.created_at) limit 5;
+
+select u.firstname,du.fpurchase AS First_Purchase,du.did AS NO_OF_Purchases,du.total AS Total_Money_Spent from users u INNER JOIN (select user_id,(quantity*unit_price+shipping_charges) as fpurchase,count(id) as did,sum(quantity*unit_price+shipping_charges) as total from deals_users group by user_id) du  ON u.id=du.user_id AND u.firstname="Rajat"
 

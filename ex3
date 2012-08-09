@@ -70,15 +70,18 @@ INSERT INTO Comments VALUES("user2","a5","11","Right");
 
 queries:
 
+ans 1
 select Article_Id from Articles where User_Id="user3";
 
 
-select c.Article_Id,c.comment from Comments c where c.Article_Id="user3" IN(
-select a.Article_Id from Articles a where a.User_Id="user3");
 
+
+
+ans 2
 select c.Article_Id,c.comment from Comments c Inner join Articles a
 ON a.Article_Id=c.Article_Id AND a.User_Id="user3";
 
+ans 3
 select Article_Id from Articles where Article_Id NOT IN(
 select Article_Id from Comments);
 
@@ -87,14 +90,16 @@ Left Join Comments c
 ON a.Article_Id=c.Article_Id
 where c.Article_Id is null
 
-select Article_Id from Comments GROUP BY Article_Id ORDER BY COUNT(Article_Id) DESC limit 1;
+ans 4
 
+select Article_Id from Comments GROUP BY Article_Id ORDER BY COUNT(Article_Id) DESC limit 1;
 
 select Article_Id from Comments GROUP BY Article_Id having count(Article_Id) = (select max(aa.a) from (
 select count(Article_Id) as a from Comments GROUP BY Article_Id) as aa); 
 
 
 
+ans 5
 select a.Article_Id from Articles a
 LEFT JOIN (select Article_Id from Comments
 group by Article_Id,User_Id
