@@ -66,72 +66,66 @@ Insert INTO Allotments VALUES("a4","Iphone A","e1","2011-04-01","0000-00-00");
 Insert INTO Allotments VALUES("a5","Iphone B","e2","2011-01-01","0000-00-00");
 
 Queries:
+ans 1
 
-select e.Name from Employees e
+select e.name from Employees e
 INNER JOIN Allotments a
-ON e.Employee_Id=a.Employee_Id
-GROUP BY a.Employee_Id
-ORDER BY COUNT(a.Employee_Id) DESC limit 1;
-
-
-select e.Name from Employees e
-INNER JOIN Allotments a
-ON e.Employee_Id=a.Employee_Id AND a.Time_To='0000-00-00'
-GROUP BY a.Employee_Id
-ORDER BY COUNT(a.Employee_Id) DESC limit 1;
+on e.Employee_Id=a.Employee_Id
+Group by e.Employee_Id
+having count(a.Employee_Id)=(select COUNT(Employee_Id) as c from Allotments
+Group by Employee_Id order by c DESC limit 1)
 
 
 
-select e.Name,count(a.Employee_Id) from Employees e 
+
+ans 2
+
+select e.Name from Employees e 
 INNER JOIN Allotments a
 ON a.Employee_Id=e.Employee_Id AND a.Time_To='0000-00-00'
-Group BY a.Employee_Id having count(a.Employee_Id)=(select max(tt.cc) from (select count(Employee_Id) as cc from Allotments where Time_To='0000-00-00' group by Employee_Id) as tt);  
+Group BY a.Employee_Id having count(a.Employee_Id)=(select count(Employee_Id) as cc from Allotments where Time_To='0000-00-00' group by Employee_Id order by cc DESC limit 1);  
 
 
+ans 3
 
-
-select e.Name,DATEDIFF(CURDATE(),a.Bought) AS Period
+select e.Name,if(al.Time_to="0000-00-00",DATEDIFF(CURDATE(),al.Time_From),DATEDIFF(al.Time_to,al.Time_From)) AS Period
 from Assets a
 INNER JOIN Allotments al
-ON a.Asset_Id=al.Asset_Id AND a.Bought=al.Time_From AND type="Laptop" AND al.Time_To="0000-00-00"
+ON a.Asset_Id=al.Asset_Id AND al.Asset_Id="Laptop A"
 INNER JOIN Employees e
 ON e.Employee_Id=al.Employee_Id;
 
+ans 4
 select Asset_Id from Assets where Location="cupboard";
 
-
+ans 5
 select a.Asset_Id from Allotments a
 INNER JOIN Employees e
-ON a.Employee_Id=e.Employee_Id AND e.Name="Bob" AND a.Time_To="0000-00-00";
+ON a.Employee_Id=e.Employee_Id AND e.Employee_Id="e2" AND a.Time_To="0000-00-00";
 
+ans 6
 select a.Asset_Id from Assets a
 where DATEDIFF(CURDATE(),a.Bought)>(a.Warranty*365);
 
+ans 7
 select ee.Name from Employees ee
 where ee.Employee_Id NOT IN(
 select e.Employee_Id from Employees e
 INNER JOIN Allotments a
 ON e.Employee_Id=a.Employee_Id);
 
+with join:
+
+select ee.Name from Employees ee
+LEFT JOIN Allotments a
+on ee.Employee_Id=a.Employee_Id
+where a.Employee_Id IS NULL
 
 
 
 
 
 
-
-
-select e.Name from Employees e 
-INNER JOIN Allotments a
-ON a.Employee_Id=e.Employee_Id AND a.Time_To='0000-00-00'
-Group BY a.Employee_Id having count(a.Employee_Id)=(select max(tt.cc) from (select count(Employee_Id) as cc from Allotments where Time_To='0000-00-00' group by Employee_Id) as tt);  
-
-
-select e.Name from Employees e 
-INNER JOIN Allotments a
-ON a.Employee_Id=e.Employee_Id AND a.Time_To='0000-00-00'
-INNER JOIN (select max(tt.cc) from (select Employee_Id,count(Employee_Id) as cc from Allotments where Time_To='0000-00-00' group by Employee_Id) as tt) as f
-ON f.Employee_Id=a.Employee_Id
 
 
 
