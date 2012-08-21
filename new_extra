@@ -1,0 +1,123 @@
+create table users (
+id INT,
+name VARCHAR(20),
+PRIMARY KEY(id)
+);
+
+
+create table friends (
+user_id INT,
+friend INT,
+primary key(user_id,friend),
+FOREIGN KEY (user_id) REFERENCES users(id),
+FOREIGN KEY (friend) REFERENCES users(id)
+);
+
+
+create table images (
+id INT,
+image_user INT,
+PRIMARY KEY(id),
+FOREIGN KEY (image_user) REFERENCES users(id)
+);
+
+
+create table tags (
+image_id INT,
+tagged INT,
+FOREIGN KEY (image_id) REFERENCES images(id),
+FOREIGN KEY (tagged) REFERENCES users(id)
+);
+
+
+insert into users values (1,"abhishek");
+insert into users values (2,"vasudha");
+insert into users values (3,"aayush");
+insert into users values (4,"nikhil");
+insert into users values (5,"madhav");
+
+
+insert into friends values (1,2);
+insert into friends values (1,3);
+insert into friends values (1,4);
+insert into friends values (2,4);
+insert into friends values (2,3);
+insert into friends values (3,4);
+
+
+
+insert into images values(1,1);
+insert into images values(2,1);
+insert into images values(3,1);
+insert into images values(4,3);
+insert into images values(5,3);
+insert into images values(6,4);
+
+
+
+insert into tags values (1,1);
+insert into tags values (1,2);
+insert into tags values (1,3);
+insert into tags values (2,3);
+insert into tags values (3,4);
+insert into tags values (3,1);
+insert into tags values (4,2);
+insert into tags values (5,2);
+insert into tags values (4,1);
+insert into tags values (6,1);
+insert into tags values (5,1);
+
+
+
+Queries
+1) Find image that has been tagged most no of times.
+2) Find all images belonging to the friends of a particular user.
+3) Find all friends of a particular user (Say, userA) who has tagged him in all of his pics.
+4) Find friend of a particular user (Say, userA) who have tagged him most no. of times.
+
+
+
+
+ans 1
+
+select t.image_id from tags t 
+group by t.image_id
+having count(t.tagged) = (select count(tagged) from tags group by image_id order by count(tagged) desc limit 1); 
+
+
+ans 2
+select i.id from images i,users u,friends f
+where (u.id=2 AND u.id=f.user_id) AND (f.friend=i.image_user) AND (i.id);
+
+
+ans 3
+select f.friend from friends f,images i
+where f.user_id=1 and f.friend=i.image_user
+group by f.friend
+having count(i.id) = (select count(t.image_id) from tags t,images ii
+where  (f.friend=ii.image_user) AND t.tagged=1 AND(t.image_id=ii.id)
+group by f.friend);
+
+
+
+ans 4
+select f.friend from friends f,images i,tags t
+where (f.user_id=1) AND (f.friend=i.image_user) ANd (t.tagged=1 AND i.id=t.image_id)
+group by i.image_user
+having count(t.tagged)=(select count(t.tagged) from friends f,images i,tags t
+where (f.user_id=1) AND (f.friend=i.image_user) ANd (t.tagged=1 AND i.id=t.image_id)
+group by i.image_user
+order by count(t.tagged) desc limit 1);
+
+
+
+
+***********************************
+
+
+
+
+
+
+
+
